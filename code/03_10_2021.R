@@ -34,7 +34,7 @@ for (i in c("17", "18", "19", "20")){
       next
     }else{
       data <- rbind(data, 
-                    promis.intake.cleaner(read_csv(paste(phrase, i, j, ".csv"))))
+                    promis.intake.cleaner(read_csv(paste0(phrase, i, j, ".csv"))))
     }
   }
 }
