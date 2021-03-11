@@ -38,5 +38,5 @@ for (i in c("17", "18", "19", "20")){
   }
 }
 
-write_csv(data, "quarterly.csv")
+write_csv(data, "/home/soumikp/bios629_output/quarterly.csv")
 
