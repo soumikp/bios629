@@ -1,4 +1,6 @@
 require(tidyverse)
+require(lubridate)
+require(data.table)
 
 #cleaning quarterly data - promis scores summed
 promis.quarter.cleaner <- function(data){
@@ -39,4 +41,53 @@ for (i in c("17", "18", "19", "20")){
 }
 
 write_csv(data, "/home/soumikp/bios629_output/quarterly.csv")
+
+temp.intake <- read_csv("/home/soumikp/bios629_output/intake.csv")
+temp.quarterly <- read_csv("/home/soumikp/bios629_output/quarterly.csv")
+
+promis <- rbind(temp.intake, temp.quarterly) %>% 
+  arrange(PRID, time) %>% 
+  drop_na() %>% 
+  rename(end = time) %>% 
+  mutate(start = end - days(7)) %>% 
+  select(PRID, start, end, promis)
+
+write_csv(promis, "/home/soumikp/bios629_output/promis.csv")
+
+file.name.creator <- function(start.time, end.time){
+  file.start <- paste0(year(start.time),
+                       ifelse(month(start.time) < 10, 
+                              paste0("0", month(start.time)), 
+                              month(start.time)), 
+                       ".csv")
+  file.end <- paste0(year(end.time),
+                     ifelse(month(end.time) < 10, 
+                            paste0("0", month(end.time)), 
+                            month(end.time)), 
+                     ".csv")
+  return(unique(c(file.start, file.end)))
+}   
+
+active.data <- function(PRID, start.time, end.time){
+  files <- file.name.creator(start.time, end.time)
+  if(length(files) == 1){
+    return(as_tibble(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+                           files))) %>% 
+             drop_na() %>% 
+             filter(ParticipantResearchID == PRID) %>% 
+             filter(StartDate >= start.time & Date <= end.time) %>% 
+             summarise(active = sum(Value)) %>% 
+             pull(active))
+  }else{
+    file <- as_tibble(rbind(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+                                  files[1])), 
+                  fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+                                  files[2])))) %>% drop_na()
+    return(file %>% 
+             filter(ParticipantResearchID == PRID) %>% 
+             filter(StartDate >= start.time & Date <= end.time) %>% 
+             summarise(active = sum(Value)) %>% 
+             pull(active))
+  }
+}
 
