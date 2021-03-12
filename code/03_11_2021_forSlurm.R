@@ -45,8 +45,8 @@ end <- min(60*i, 29320)
 
 promis <- as_tibble(fread("/home/soumikp/bios629_output/promis.csv"))[begin:end, ]
 
-write_csv(promis %>% 
+save(promis %>% 
             rowwise() %>% 
             mutate(act = possibly(active.data, otherwise = NA_real_)(PRID, start, end)), 
-          paste0("/home/soumikp/bios629_output/slurm_op/promis_", i, ".csv"))
+          file = paste0("/home/soumikp/bios629_output/slurm_op/promis_", i, ".Rdata"))
 

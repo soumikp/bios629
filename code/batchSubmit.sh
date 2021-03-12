@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=hello_world
+#SBATCH --job-name=promis
 #SBATCH --time=60:00
 #SBATCH --mail-type=NONE
-#SBATCH --mem=2g
+#SBATCH --mem=1g
 #SBATCH --cpus-per-task=1
 #SBATCH --account=precisionhealth_owned2
 #SBATCH --partition=precisionhealth
-#SBATCH --output=/home/soumikp/bios629_output/
+#SBATCH --output=/home/soumikp/bios629_output/slurm_log/promis_%a.log
 #SBATCH --array=1-489
 
 module load R/4.0.2
