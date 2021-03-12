@@ -52,7 +52,7 @@ promis <- rbind(temp.intake, temp.quarterly) %>%
   mutate(start = end - days(7)) %>% 
   select(PRID, start, end, promis)
 
-write_csv(promis, "/home/soumikp/bios629_output/promis.csv")
+write_csv(promis, "/home/soumikp/bios629_output/quarterly.csv")
 
 file.name.creator <- function(start.time, end.time){
   file.start <- paste0(year(start.time),
@@ -91,3 +91,4 @@ active.data <- function(PRID, start.time, end.time){
   }
 }
 
+#system.time(temp %>% rowwise() %>% mutate(act = possibly(active.data, otherwise = NA_real_)(PRID, start, end)))
