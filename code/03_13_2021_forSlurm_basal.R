@@ -48,7 +48,7 @@ promis <- as_tibble(fread("/home/soumikp/bios629_output/promis.csv"))[begin:end,
 
 temp <- promis %>% 
   rowwise() %>% 
-  mutate(act = possibly(active.data, otherwise = NA_real_)(PRID, start, end))
+  mutate(act = possibly(basal.data, otherwise = NA_real_)(PRID, start, end))
 
 write_csv(temp, paste0("/home/soumikp/bios629_output/slurm_op/basal_", i, ".csv"))
 

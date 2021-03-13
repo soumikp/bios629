@@ -9,4 +9,4 @@
 #SBATCH --array=1-489
 
 module load R/4.0.2
-R CMD BATCH --no-save --no-restore /home/soumikp/bios629/code/03_11_2021_forSlurm_basal.R arrayscript_$SLURM_ARRAY_TASK_ID.Rout
+R CMD BATCH --no-save --no-restore /home/soumikp/bios629/code/03_11_2021_forSlurm.R arrayscript_$SLURM_ARRAY_TASK_ID.Rout
