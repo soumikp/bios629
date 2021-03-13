@@ -17,19 +17,19 @@ file.name.creator <- function(start.time, end.time){
   return(unique(c(file.start, file.end)))
 }  
 
-active.data <- function(PRID, start.time, end.time){
+basal.data <- function(PRID, start.time, end.time){
   files <- file.name.creator(start.time, end.time)
   if(length(files) == 1){
-    return(as_tibble(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+    return(as_tibble(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_BasalBodyTemperature/BasalBodyTemperature_", 
                                   files))) %>% 
              filter(ParticipantResearchID == PRID) %>% 
              filter(StartDate >= start.time & Date <= end.time) %>% 
              summarise(active = sum(Value)) %>% 
              pull(active))
   }else{
-    file <- as_tibble(rbind(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+    file <- as_tibble(rbind(fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_BasalBodyTemperature/BasalBodyTemperature_", 
                                          files[1])), 
-                            fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_AppleExerciseTime/AppleExerciseTime_", 
+                            fread(paste0("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/Healthkit_BasalBodyTemperature/BasalBodyTemperature_", 
                                          files[2])))) 
     return(file %>% 
              filter(ParticipantResearchID == PRID) %>% 
@@ -50,5 +50,5 @@ temp <- promis %>%
   rowwise() %>% 
   mutate(act = possibly(active.data, otherwise = NA_real_)(PRID, start, end))
 
-write_csv(temp, paste0("/home/soumikp/bios629_output/slurm_op/promis_", i, ".csv"))
+write_csv(temp, paste0("/home/soumikp/bios629_output/slurm_op/basal_", i, ".csv"))
 
