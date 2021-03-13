@@ -61,5 +61,23 @@ for(i in 1:489){
   active <- rbind(temp, active)
 }
 
-write_csv(acive, "/home/soumikp/bios629_output/active.csv")
+demo <- read_csv("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/EHR/EHR_Demographic_202010.csv") %>% 
+  rename(PRID = ParticipantResearchID, 
+         Age = AgeAtEnrollment, 
+         Sex = GenderName, 
+         Marital = MaritalStatusName, 
+         Race = RaceName) %>% 
+  select(PRID, Age, Sex, Marital, Race)
+
+
+data <- right_join(active, demo) %>% 
+  group_by(PRID) %>% 
+  mutate(OBS = seq_along(end)) %>% 
+  select(PRID, OBS, promis, act, Age, Sex, Marital, Race) %>% 
+  ungroup()
+
+write_csv(active, "/home/soumikp/bios629_output/data.csv")
+
+
+
 
