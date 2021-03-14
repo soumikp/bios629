@@ -78,6 +78,30 @@ data <- right_join(active, demo) %>%
 
 write_csv(active, "/home/soumikp/bios629_output/data.csv")
 
+data <- data %>% 
+  mutate(Time = (OBS - 1)*3) %>% 
+  rename(PROMIS = promis, 
+         Activity = act) %>% 
+  mutate(Race = ifelse(Race %in% c("Asian", "Caucasian", "African American"),
+                       Race, 
+                       "Other")) %>% 
+  mutate(Age.cat = ifelse(Age <= 30, "18 - 30", 
+                          ifelse(Age <= 45, "30 - 45", 
+                                 ifelse(Age <= 60, "45 - 60", "60+"))))
 
+require(lme4)
 
+inv.norm <- function(x){
+  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+}
 
+model <- lmer(PROMIS ~ as.factor(Time)+ Age + Sex + Marital + Race + Activity + (1|PRID), 
+              data = data #%>% mutate(PROMIS = inv.norm(PROMIS))
+              )
+summary(model)
+tab_model(model)
+
+table1::table1(~PROMIS|Age.cat, data = data)
+table1::table1(~PROMIS|Sex, data = data)
+table1::table1(~PROMIS|Race, data = data)
+table1::table1(~PROMIS|Marital, data = data)
