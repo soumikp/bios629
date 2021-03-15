@@ -70,16 +70,15 @@ demo <- read_csv("/nfs/turbo/umms-HDS629/MIPACT/HealthKit_Live/EHR/EHR_Demograph
   select(PRID, Age, Sex, Marital, Race)
 
 
-data <- right_join(active, demo) %>% 
+data <- left_join(active, demo) %>% 
   group_by(PRID) %>% 
   mutate(OBS = seq_along(end)) %>% 
   select(PRID, OBS, promis, act, Age, Sex, Marital, Race) %>% 
   ungroup()
 
-write_csv(active, "/home/soumikp/bios629_output/data.csv")
+#write_csv(active, "/home/soumikp/bios629_output/data.csv")
 
 data <- data %>% 
-  mutate(Time = (OBS - 1)*3) %>% 
   rename(PROMIS = promis, 
          Activity = act) %>% 
   mutate(Race = ifelse(Race %in% c("Asian", "Caucasian", "African American"),
@@ -91,13 +90,14 @@ data <- data %>%
 
 require(lme4)
 
-inv.norm <- function(x){
-  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
-}
+# inv.norm <- function(x){
+#   qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+# }
 
-model <- lmer(PROMIS ~ as.factor(Time)+ Age + Sex + Marital + Race + Activity + (1|PRID), 
+model <- lmer(PROMIS ~ as.factor(OBS)+ Age + Sex + Marital + Race + Activity + (1|PRID), 
               data = data #%>% mutate(PROMIS = inv.norm(PROMIS))
               )
+
 summary(model)
 tab_model(model)
 
