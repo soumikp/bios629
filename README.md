@@ -20,5 +20,4 @@ All figures may be found in the [images](https://github.com/soumikp/bios629/tree
 The [report](https://github.com/soumikp/bios629/tree/main/report) contains both word and pdf versions of the report. 
 
 ## Queries
-Please send me an [email](mailto:soumikp@umich.edu) if you have any questions. 
-
+Please send me an [email](mailto:soumikp@umich.edu) if you have any questions.
